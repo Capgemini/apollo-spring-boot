@@ -1,0 +1,48 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE")
+        classpath('se.transmode.gradle:gradle-docker:1.2')
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'eclipse'
+apply plugin: 'spring-boot'
+apply plugin: 'docker'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+version = '1.0.0'
+group = 'capgemini'
+
+ext {
+    commonVersions = [
+            springBoot: "1.2.2.RELEASE"
+    ]
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-web:${commonVersions.springBoot}"
+    compile "org.springframework.boot:spring-boot-starter-actuator:${commonVersions.springBoot}"
+    compile 'org.projectlombok:lombok:1.16.4'
+}
+
+task buildDocker(type: Docker, dependsOn: build) {
+    push = false
+    applicationName = jar.baseName
+    dockerfile = file('src/main/docker/DockerFile')
+    doFirst {
+        copy {
+            from jar
+            into stageDir
+        }
+    }
+}
