@@ -1,4 +1,4 @@
-FROM java:8
+FROM java:7
 VOLUME /tmp
 ADD apollo-spring-boot-1.0.jar app.jar
 RUN bash -c 'touch /app.jar'
